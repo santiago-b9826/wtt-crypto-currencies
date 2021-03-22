@@ -31,7 +31,7 @@ describe('General application test', () => {
 });
 
 describe('GET /ping', () => {
-  it('Server Pong', (done) => {
+  it('Server Ping, verifies that server is running', (done) => {
     request(app)
       .get('/ping')
       .set('Accept', 'application/json')

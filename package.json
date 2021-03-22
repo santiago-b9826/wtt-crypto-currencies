@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "mocha App/test/index.spec.js",
+    "test": "mocha App/test/",
     "coverage": "nyc npm test"
   },
   "author": "Santiago Bedoya",
