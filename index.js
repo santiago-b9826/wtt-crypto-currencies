@@ -1,5 +1,17 @@
-const Express = require('express');
-const { server } = require('./App/config');
+/* eslint-disable no-console */
+const { app, connection } = require('./App/config');
 
-const app = new Express();
-server(app);
+const server = async () => {
+  try {
+    await connection();
+    console.log('DB Connection was successfully established');
+    app.listen(app.get('port'), () => {
+      console.log(`The app is listening on the port ${app.get('port')}`);
+    });
+  } catch (error) {
+    console.error('Error launch application');
+    process.exit(1);
+  }
+};
+
+server();

@@ -12,4 +12,6 @@ const connection = async () => {
   await connect(MONGO_URL, MONGO_OPS);
 };
 
-module.exports = connection;
+module.exports = {
+  connection
+};
