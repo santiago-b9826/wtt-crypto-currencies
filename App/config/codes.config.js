@@ -1,0 +1,4 @@
+module.exports = {
+  INTERNAL_CODE: 'INTERNAL_ERROR',
+  NOT_FOUND_CODE: 'RESOURCE_NOT_FOUND'
+};
