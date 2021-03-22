@@ -1,4 +1,4 @@
-const { BAD_REQUEST } = require('http-status');
+const { NOT_FOUND } = require('http-status');
 const { NOT_FOUND_CODE } = require('../../config/codes.config');
 
 class NotFoundError extends Error {
@@ -12,7 +12,7 @@ class NotFoundError extends Error {
     super(message);
 
     this.code = NOT_FOUND_CODE;
-    this.status = BAD_REQUEST;
+    this.status = NOT_FOUND;
   }
 }
 
