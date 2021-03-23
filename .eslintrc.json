@@ -12,6 +12,7 @@
     "ecmaVersion": 12
   },
   "rules": {
+    "object-curly-newline": 0,
     "comma-dangle": [
       "error",
       "never"

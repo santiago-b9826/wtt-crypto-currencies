@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 const { app, connection } = require('./App/config');
+const { MONGO_URL } = require('./App/config/env.config');
 
 const server = async () => {
   try {
-    await connection();
+    await connection(MONGO_URL);
     console.log('DB Connection was successfully established');
     app.listen(app.get('port'), () => {
       console.log(`The app is listening on the port ${app.get('port')}`);
