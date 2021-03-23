@@ -1,8 +1,10 @@
-const { before, after } = require('mocha');
+const { before } = require('mocha');
 const request = require('supertest');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const { app, connection } = require('../../config');
-const { User } = require('../../src/models');
+
+const mongoServer = new MongoMemoryServer();
 
 const user = {
   name: 'Integration',
@@ -25,7 +27,8 @@ describe('POST /api/v1/users', () => {
   );
 
   before(async () => {
-    await connection();
+    const mongoUrl = await mongoServer.getUri();
+    await connection(mongoUrl);
   });
 
   it('Create an unexisting user', (done) => {
@@ -92,9 +95,5 @@ describe('POST /api/v1/users', () => {
     const copiedUser = copyUser();
     delete copiedUser.preferredCurrency;
     simpleUserTestingPipe(400, copiedUser, done);
-  });
-
-  after(async () => {
-    await User.deleteOne({ nickname: user.nickname });
   });
 });
