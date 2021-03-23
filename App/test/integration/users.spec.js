@@ -71,13 +71,6 @@ describe('POST /api/v1/users', () => {
     simpleUserTestingPipe(400, copiedUser, done);
   });
 
-  it('Try to create an user with a password that does not match with the expected pattern (Non alphanumeric character)',
-    (done) => {
-      const copiedUser = copyUser();
-      copiedUser.password = 'tester 1';
-      simpleUserTestingPipe(400, copiedUser, done);
-    });
-
   it('Try to create an user with a password that does not match with the expected pattern (Less than 8 characters)',
     (done) => {
       const copiedUser = copyUser();
