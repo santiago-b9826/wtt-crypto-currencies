@@ -1,4 +1,4 @@
-const { before } = require('mocha');
+const { after, before } = require('mocha');
 const request = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
@@ -17,18 +17,20 @@ const user = {
 describe('POST /api/v1/users', () => {
   const PATH = '/api/v1/users';
   const copyUser = () => ({ ...user });
+  let db;
 
   const simpleUserTestingPipe = (statusExpected, currentUser, done) => (
     request(app)
       .post(PATH)
       .send(currentUser)
       .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
       .expect(statusExpected, done)
   );
 
   before(async () => {
     const mongoUrl = await mongoServer.getUri();
-    await connection(mongoUrl);
+    db = await connection(mongoUrl);
   });
 
   it('Create an unexisting user', (done) => {
@@ -40,6 +42,7 @@ describe('POST /api/v1/users', () => {
       .post(PATH)
       .send(user)
       .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
       .expect(500)
       .expect({
         code: 'DATABASE_ERROR',
@@ -49,44 +52,48 @@ describe('POST /api/v1/users', () => {
       }, done);
   });
 
-  it('Try to create an user passing an empty object', (done) => {
+  it('Trying to create an user passing an empty object', (done) => {
     simpleUserTestingPipe(400, {}, done);
   });
 
-  it('Try to create an user passing an object without name', (done) => {
+  it('Trying to create an user passing an object without name', (done) => {
     const copiedUser = copyUser();
     delete copiedUser.name;
     simpleUserTestingPipe(400, copiedUser, done);
   });
 
-  it('Try to create an user passing an object without lastname', (done) => {
+  it('Trying to create an user passing an object without lastname', (done) => {
     const copiedUser = copyUser();
     delete copiedUser.lastname;
     simpleUserTestingPipe(400, copiedUser, done);
   });
 
-  it('Try to create an user passing an object without password', (done) => {
+  it('Trying to create an user passing an object without password', (done) => {
     const copiedUser = copyUser();
     delete copiedUser.password;
     simpleUserTestingPipe(400, copiedUser, done);
   });
 
-  it('Try to create an user with a password that does not match with the expected pattern (Less than 8 characters)',
+  it('Trying to create an user with a password that does not match with the expected pattern (Less than 8 characters)',
     (done) => {
       const copiedUser = copyUser();
       copiedUser.password = 'testing';
       simpleUserTestingPipe(400, copiedUser, done);
     });
 
-  it('Try to create an user passing an object with an empty nickname', (done) => {
+  it('Trying to create an user passing an object with an empty nickname', (done) => {
     const copiedUser = copyUser();
     copiedUser.nickname = '';
     simpleUserTestingPipe(400, copiedUser, done);
   });
 
-  it('Try to create an user passing an object with an empty preferredCurrency', (done) => {
+  it('Trying to create an user passing an object with an empty preferredCurrency', (done) => {
     const copiedUser = copyUser();
     delete copiedUser.preferredCurrency;
     simpleUserTestingPipe(400, copiedUser, done);
+  });
+
+  after(async () => {
+    await db.disconnect();
   });
 });

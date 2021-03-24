@@ -8,7 +8,8 @@ const MONGO_OPS = {
 };
 
 const connection = async (mongoUrl) => {
-  await connect(mongoUrl, MONGO_OPS);
+  const db = await connect(mongoUrl, MONGO_OPS);
+  return db;
 };
 
 module.exports = {
