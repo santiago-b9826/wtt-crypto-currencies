@@ -7,11 +7,12 @@ describe('GET /ping', () => {
     request(app)
       .get('/ping')
       .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
       .expect(200, done);
   });
 });
 
-describe('General application test', () => {
+describe('Get /intentional-failure', () => {
   it('A service does not have a caught exception', (done) => {
     request(app)
       .get('/intentional-failure')
@@ -24,7 +25,9 @@ describe('General application test', () => {
         message: 'An internal server error ocurred'
       }, done);
   });
+});
 
+describe('Get /non-existent', () => {
   it('Access to a nonexistent path', (done) => {
     request(app)
       .get('/non-existent')

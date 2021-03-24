@@ -28,3 +28,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm i
     - run: npm test
+      env:
+        JWT_SECRET: 'test-secret'
