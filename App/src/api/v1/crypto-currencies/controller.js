@@ -1,5 +1,7 @@
+const _ = require('lodash');
 const { OK } = require('http-status');
 
+const { AuthorizationError } = require('../../../errors');
 const { SUCCESS_CODE } = require('../../../../config/codes.config');
 const { listMoreCryptoCurrenciesThanAllowedLimit, buildParams } = require('./utils');
 const { COINGECKO_MAX_COINS_MARKETS_PER_PAGE } = require('../../../../config/env.config');
@@ -10,7 +12,10 @@ const read = async (req, res) => {
   const { page, limit, all } = req.query;
   let listOfCryptos;
 
-  const { preferredCurrency } = await getUserByNickname(nickname);
+  const currentUser = await getUserByNickname(nickname);
+  if (_.isEmpty(currentUser)) throw new AuthorizationError('User is currently not enabled on the platform');
+  const { preferredCurrency } = currentUser;
+
   if (all) {
     const globlaData = await getGlobalData();
     const totalActiveCryptos = globlaData.data.active_cryptocurrencies;
