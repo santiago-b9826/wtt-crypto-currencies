@@ -3,5 +3,6 @@ module.exports = {
   ...require('./not-found.error'),
   ...require('./database.error'),
   ...require('./login.error'),
-  ...require('./authorization.error')
+  ...require('./authorization.error'),
+  ...require('./coingecko.error')
 };
