@@ -240,7 +240,7 @@ describe('PATCH /api/v1/users/:nickname/crypto-currencies', () => {
         expect(response.body.error).to.be.true;
         expect(response.body.code).to.be.equal('COINGECKO_ERROR');
         expect(response.body.data).to.be.an('object');
-        expect(response.body.message).to.be.equal('Crypto currencies cannot be saved beacuse [fakecoin] do not exist');
+        expect(response.body.message).to.be.equal('Crypto currencies cannot be saved beacuse [fakecoin] do not exist. Remember send the crypto currency Id');
         done();
       })
       .catch((err) => done(err));

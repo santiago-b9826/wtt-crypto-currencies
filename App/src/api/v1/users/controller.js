@@ -38,7 +38,7 @@ const addCryptos = async (req, res) => {
     listOfInvalidIds
   } = await validateExistenceOfCryptos(cryptos, currentUser.preferredCurrency);
 
-  if (areNonExistentCryptos) throw new CoinGeckoError(`Crypto currencies cannot be saved beacuse [${listOfInvalidIds.join(', ')}] do not exist`);
+  if (areNonExistentCryptos) throw new CoinGeckoError(`Crypto currencies cannot be saved beacuse [${listOfInvalidIds.join(', ')}] do not exist. Remember send the crypto currency Id`);
   const updatedUser = await updateUser(
     { nickname },
     { $addToSet: { cryptoCurrencies: { $each: cryptos } } }
