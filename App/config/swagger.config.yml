@@ -7,9 +7,9 @@ info:
   contact:
     email: santiago.b9826@gmail.com
 servers:
-  - url: http://localhost:5000
   - url: https://wtt-crypto-currencies-dev.herokuapp.com
   - url: https://wtt-crypto-currencies.herokuapp.com
+  - url: http://localhost:5000
 tags:
 - name: general
   description: General services
@@ -305,7 +305,7 @@ paths:
           schema:
             type: boolean
           required: false
-          description: Flag indicating that All active cryptos are getting
+          description: Flag indicating that All active cryptos are getting. [***Warning***] Try to use this option to true if you don't have to render all data.
         - in: query
           name: page
           schema:
