@@ -16,6 +16,11 @@ const CreateUserSchema = Joi.object({
     .required()
 });
 
+const AddCryptosToUserSchema = Joi.object({
+  cryptos: Joi.array().items(Joi.string()).min(1).required()
+});
+
 module.exports = {
-  CreateUserSchema
+  CreateUserSchema,
+  AddCryptosToUserSchema
 };
