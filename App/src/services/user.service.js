@@ -29,8 +29,23 @@ const saveUser = async (user) => {
   }
 };
 
+const updateUser = async (filter, objectUpdate) => {
+  try {
+    const userUpdated = await User.findOneAndUpdate(
+      filter,
+      objectUpdate,
+      { projection: { password: 0 }, returnOriginal: false }
+    ).lean().exec();
+
+    return userUpdated;
+  } catch (error) {
+    throw new DatabaseError('User cannot be update');
+  }
+};
+
 module.exports = {
   saveUser,
+  updateUser,
   getUserByNickname,
   getUserByNicknameAndPassword
 };
