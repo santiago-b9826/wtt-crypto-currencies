@@ -1,0 +1,403 @@
+---
+openapi: "3.0.0"
+info:
+  description: ''
+  version: 1.0.0
+  title: Wolox Technical Test - Crypto Currencies API
+  contact:
+    email: santiago.b9826@gmail.com
+servers:
+  - url: http://localhost:5000
+  - url: https://wtt-crypto-currencies-dev.herokuapp.com
+  - url: https://wtt-crypto-currencies.herokuapp.com
+tags:
+- name: general
+  description: General services
+- name: auth
+  description: Authentication services
+- name: users
+  description: User services
+- name: crypto-currencies
+  description: Crypto currencies services
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+paths:
+  /ping:
+    get:
+      tags: 
+        - general
+      description: Test the server status sending a basic request
+      operationId: ping
+      security: []
+      consumes:
+        -application/json
+      responses: 
+        200: 
+          description: The server is Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /intentional-failure:
+    get:
+      tags:
+      - general
+      description: Endpoint to see the responses format when the server fails
+      operationId: intentional-failure 
+      security: []
+      consumes:
+        -application/json
+      responses: 
+        500: 
+          description: The server gives a response with an internal server error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+  /protected-route: 
+    get:
+      tags:
+      - general
+      description: Endpoint to see the responses format when user tries to acces to a protected resource
+      operationId: protected-route 
+      security: 
+        - BearerAuth: []
+      consumes:
+        -application/json
+      responses: 
+        200:
+          description: User with the appropriate permissions to access the resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          description: User with unappropriate permissions to access the resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+  /api/v1/users:
+    post:
+      tags:
+      - users
+      description: Create a new user
+      operationId: create-user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/create-user-data"
+      responses: 
+        200:
+          description: User created Successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        400:
+          description: Error sending parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        500:
+          description: A user with that nickname already exists
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+  /api/v1/users/{nickname}/crypto-currencies:
+    patch:
+      tags:
+      - users
+      description: Add crypto currencies to a user
+      operationId: add-cryptos-to-user
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: nickname
+          schema:
+            type: string
+          required: true
+          description: Unique nickname to identify the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/add-cryptos"
+      responses: 
+        200:
+          description: Crypto currencies saved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        400:
+          description: Error sending parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        401:
+          description: User with unappropriate permissions to access the resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        500:
+          description: Crypto currencies cannot be saved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+  /api/v1/users/{nickname}/crypto-currencies/top:
+    get:
+      tags:
+      - users
+      description: Get the Top n crypto currencies to the user
+      operationId: get-top-cryptos
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: nickname
+          schema:
+            type: string
+          required: true
+          description: Unique nickname to identify the user
+        - in: query
+          name: n
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Number of crypto currencis to get in the top
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Sort the results. Descending (desc) by default 
+      responses: 
+        200:
+          description: Top n of user crypto currencies
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        400:
+          description: Error sending parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        401:
+          description: User with unappropriate permissions to access the resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        500:
+          description: Cannot get Top n of cryptos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+  /api/v1/auth/login:
+    get:
+      tags:
+      - auth
+      description: Login to the API
+      operationId: login
+      security: []
+      parameters:
+        - in: query
+          name: nickname
+          schema:
+            type: string
+          required: true
+          description: Unique nickname to identify the user
+        - in: query
+          name: password
+          schema:
+            type: string
+            format: password
+            pattern: '^\w+$'
+          required: true
+          description: Password
+      responses: 
+        200:
+          description: User created Successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        400:
+          description: Error sending parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        500:
+          description: Nickname or Password is wrong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+  /api/v1/crypto-currencies:
+    get:
+      tags:
+      - crypto-currencies
+      description: List of crypto currencies gettien the current price of the cryptos in the preferred currency of the user logged, get by deafult page \#1 with 250 crypto currencies.
+      operationId: list-cryptos
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: all
+          schema:
+            type: boolean
+          required: false
+          description: Flag indicating that All active cryptos are getting
+        - in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+          required: false
+          description: Number of the page
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int64
+          required: false
+          description: Number of the crypto currencies per page
+      responses: 
+        200:
+          description: List crypto currencies
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        400:
+          description: Error sending parameters
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        401:
+          description: User with unappropriate permissions to access the resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+        500:
+          description: Cannot get list of cryptos crypto currencies
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/definitions/json-data"
+                  - $ref: "#/definitions/api-response-without-data"
+definitions:
+  api-response-without-data:
+    type: object
+    properties:
+      code:
+        type: string
+      error: 
+        type: boolean 
+      message:
+        type: string
+  json-data: 
+    type: object
+    properties: 
+      data: 
+        type: object
+  json-array:
+    type: array
+  create-user-data:
+    type: object
+    properties:
+      name:
+        description: Name of the user
+        required: true
+        type: string
+      lastname:
+        description: Lastname of the user
+        required: true
+        type: string
+      nickname:
+        description: Unique nickname for the user
+        required: true
+        type: string
+      password:
+        description: Password
+        required: true
+        type: string
+      preferredCurrency:
+        description: Preferred currency of the user. Can be [EUR, USD, ARS]
+        required: true
+        type: string
+  add-cryptos: 
+    type: object
+    properties: 
+      cryptos: 
+        required: true
+        type: array
+        items:
+          type: string
