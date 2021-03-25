@@ -25,7 +25,24 @@ const getCryptoCurrencies = async (params) => {
   }
 };
 
+const getCurrentDataForCryptoCurrency = async (id, params) => {
+  try {
+    const response = await coingecko.get(`/coins/${id}`, { params });
+    const {
+      name,
+      symbol,
+      image: { small: image },
+      market_data: { current_price: { ars, usd, eur } },
+      last_updated: lastUpdated
+    } = response.data;
+    return { name, symbol, image, price: { ars, usd, eur }, lastUpdated };
+  } catch (error) {
+    throw new CoinGeckoError('Cannot get current data for spicified crypto currency');
+  }
+};
+
 module.exports = {
   getGlobalData,
-  getCryptoCurrencies
+  getCryptoCurrencies,
+  getCurrentDataForCryptoCurrency
 };

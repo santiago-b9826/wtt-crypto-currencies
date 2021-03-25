@@ -17,6 +17,8 @@ const user = {
   preferredCurrency: 'ars'
 };
 
+const getFakeToken = (nickname) => sign({ sub: nickname }, process.env.JWT_SECRET, { expiresIn: '4h' });
+
 describe('POST /api/v1/users', () => {
   const PATH = '/api/v1/users';
   const copyUser = () => ({ ...user });
@@ -201,9 +203,6 @@ describe('PATCH /api/v1/users/:nickname/crypto-currencies', () => {
   const PATH = `/api/v1/users/${nickname}/crypto-currencies`;
   let db;
 
-  // eslint-disable-next-line no-shadow
-  const getFakeToken = (nickname) => sign({ sub: nickname }, process.env.JWT_SECRET, { expiresIn: '4h' });
-
   before(async () => {
     const mongoUrl = await mongoServer.getUri();
     db = await connection(mongoUrl);
@@ -215,7 +214,7 @@ describe('PATCH /api/v1/users/:nickname/crypto-currencies', () => {
       .patch(`${PATH}`)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${fakeToken}`)
-      .send({ cryptos: ['bitcoin', 'ethereum'] })
+      .send({ cryptos: ['bitcoin', 'ethereum', '01coin', '0-5x-long-balancer-token', '0-5x-long-bitcoin-cash-token'] })
       .expect('Content-Type', /json/)
       .expect(200)
       .then((response) => {
@@ -226,7 +225,7 @@ describe('PATCH /api/v1/users/:nickname/crypto-currencies', () => {
         done();
       })
       .catch((err) => done(err));
-  });
+  }).timeout(10000);
 
   it('Trying to save non-existent crypto currencies', (done) => {
     const fakeToken = getFakeToken(nickname);
@@ -318,6 +317,77 @@ describe('PATCH /api/v1/users/:nickname/crypto-currencies', () => {
         expect(response.body.error).to.be.true;
         expect(response.body.data).to.be.an('object');
         expect(response.body.code).to.be.equal('VALIDATION_ERROR');
+        expect(response.body.message).to.be.an('array');
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  after(async () => {
+    await db.disconnect();
+  });
+});
+
+describe('GET /api/v1/users/:nickname/crypto-currencies/top', () => {
+  const { nickname } = user;
+  const PATH = `/api/v1/users/${nickname}/crypto-currencies/top`;
+  let db;
+
+  before(async () => {
+    const mongoUrl = await mongoServer.getUri();
+    db = await connection(mongoUrl);
+  });
+
+  it('Trying to get top 5 crypto currencies', (done) => {
+    const n = 5;
+    const fakeToken = getFakeToken(nickname);
+    request(app)
+      .get(`${PATH}?n=${n}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${fakeToken}`)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.error).to.be.false;
+        expect(response.body.code).to.be.equal('SUCCESS');
+        expect(response.body.data).to.be.an('array').to.have.lengthOf(n);
+        expect(response.body.message).to.be.equal(`Top ${n} of crypto currencies`);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  it('Trying to get top 2 crypto currencies ordered asc', (done) => {
+    const n = 2;
+    const fakeToken = getFakeToken(nickname);
+    request(app)
+      .get(`${PATH}?n=${n}&order=asc`)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${fakeToken}`)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.error).to.be.false;
+        expect(response.body.code).to.be.equal('SUCCESS');
+        expect(response.body.data).to.be.an('array').to.have.lengthOf(n);
+        expect(response.body.message).to.be.equal(`Top ${n} of crypto currencies`);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  it('Trying to get top n cryptos without sending n', (done) => {
+    const fakeToken = getFakeToken(nickname);
+    request(app)
+      .get(`${PATH}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${fakeToken}`)
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.error).to.be.true;
+        expect(response.body.code).to.be.equal('VALIDATION_ERROR');
+        expect(response.body.data).to.be.an('object');
         expect(response.body.message).to.be.an('array');
         done();
       })

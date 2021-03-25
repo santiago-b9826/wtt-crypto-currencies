@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { PASSWORD_PATTERN } = require('../../config/env.config');
+const { PASSWORD_PATTERN, MAX_TOP_N } = require('../../config/env.config');
 
 const CreateUserSchema = Joi.object({
   name: Joi.string().required(),
@@ -20,7 +20,17 @@ const AddCryptosToUserSchema = Joi.object({
   cryptos: Joi.array().items(Joi.string()).min(1).required()
 });
 
+const TopNCryptosSchema = Joi.object({
+  n: Joi.number().min(1).max(MAX_TOP_N).required(),
+  order: Joi.string()
+    .valid('asc', 'desc')
+    .default('desc')
+    .insensitive()
+    .lowercase()
+});
+
 module.exports = {
   CreateUserSchema,
+  TopNCryptosSchema,
   AddCryptosToUserSchema
 };
