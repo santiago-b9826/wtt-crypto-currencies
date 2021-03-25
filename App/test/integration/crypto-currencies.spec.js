@@ -41,9 +41,9 @@ describe('Get /api/v1/crypto-currencies', () => {
       .expect(200)
       .then((response) => {
         expect(response.body.error).to.be.false;
-        expect(response.body.code).to.be.a('string', 'SUCCESS');
+        expect(response.body.code).to.be.equal('SUCCESS');
         expect(response.body.data).to.be.an('object').to.have.all.keys('_id', '__v', 'name', 'lastname', 'nickname', 'password', 'preferredCurrency', 'cryptoCurrencies');
-        expect(response.body.message).to.be.a('string', 'User created successfully');
+        expect(response.body.message).to.be.equal('User created successfully');
         done();
       })
       .catch((err) => done(err));
@@ -59,9 +59,9 @@ describe('Get /api/v1/crypto-currencies', () => {
       .expect(200)
       .then((response) => {
         expect(response.body.error).to.be.false;
-        expect(response.body.code).to.be.a('string', 'SUCCESS');
+        expect(response.body.code).to.be.equal('SUCCESS');
         expect(response.body.data).to.be.an('string');
-        expect(response.body.message).to.be.a('string', 'Login');
+        expect(response.body.message).to.be.equal('Login');
         done();
       })
       .catch((err) => done(err));
@@ -79,9 +79,9 @@ describe('Get /api/v1/crypto-currencies', () => {
       .expect(200)
       .then((response) => {
         expect(response.body.error).to.be.false;
-        expect(response.body.code).to.be.a('string', 'SUCCESS');
+        expect(response.body.code).to.be.equal('SUCCESS');
         expect(response.body.data).to.be.an('array').to.have.lengthOf(250);
-        expect(response.body.message).to.be.a('string', 'Crypto currencies obtained');
+        expect(response.body.message).to.be.equal('Crypto currencies obtained');
         done();
       })
       .catch((err) => done(err));
@@ -99,9 +99,9 @@ describe('Get /api/v1/crypto-currencies', () => {
       .expect(200)
       .then((response) => {
         expect(response.body.error).to.be.false;
-        expect(response.body.code).to.be.a('string', 'SUCCESS');
+        expect(response.body.code).to.be.equal('SUCCESS');
         expect(response.body.data).to.be.an('array').to.have.lengthOf(10);
-        expect(response.body.message).to.be.a('string', 'Crypto currencies obtained');
+        expect(response.body.message).to.be.equal('Crypto currencies obtained');
         done();
       })
       .catch((err) => done(err));
@@ -119,9 +119,9 @@ describe('Get /api/v1/crypto-currencies', () => {
       .expect(200)
       .then((response) => {
         expect(response.body.error).to.be.false;
-        expect(response.body.code).to.be.a('string', 'SUCCESS');
+        expect(response.body.code).to.be.equal('SUCCESS');
         expect(response.body.data).to.be.an('array').to.have.lengthOf(1000);
-        expect(response.body.message).to.be.a('string', 'Crypto currencies obtained');
+        expect(response.body.message).to.be.equal('Crypto currencies obtained');
         done();
       })
       .catch((err) => done(err));
@@ -139,9 +139,9 @@ describe('Get /api/v1/crypto-currencies', () => {
       .expect(200)
       .then((response) => {
         expect(response.body.error).to.be.false;
-        expect(response.body.code).to.be.a('string', 'SUCCESS');
+        expect(response.body.code).to.be.equal('SUCCESS');
         expect(response.body.data).to.be.an('array').to.have.lengthOf(totalActiveCryptos);
-        expect(response.body.message).to.be.a('string', 'Crypto currencies obtained');
+        expect(response.body.message).to.be.equal('Crypto currencies obtained');
         done();
       })
       .catch((err) => done(err));
@@ -161,7 +161,7 @@ describe('Get /api/v1/crypto-currencies', () => {
         expect(response.body.error).to.be.true;
         expect(response.body.message).to.be.an('array');
         expect(response.body.data).to.be.an('object').to.be.empty;
-        expect(response.body.code).to.be.a('string', 'VALIDATION_ERROR');
+        expect(response.body.code).to.be.equal('VALIDATION_ERROR');
         done();
       })
       .catch((err) => done(err));
